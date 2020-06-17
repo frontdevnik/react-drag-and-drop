@@ -1,0 +1,1 @@
+export const QUESTION_DROP_ZONE = 'QUESTION_DROP_ZONE';

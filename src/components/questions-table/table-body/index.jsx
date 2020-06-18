@@ -21,7 +21,6 @@ function TableBody({ id }) {
     }
   };
 
-function TableBody({id}) {
   return (
     <div className="table-body">
       <Droppable droppableId={id} type={QUESTION_ITEM}>

@@ -7,13 +7,19 @@
 }
 
 .table-wrapper {
+    display: flex;
     height: 100vh;
     width: 100%;
     padding: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.table-wrapper-over {
+    background-color: ivory;
 }
 
 .table {
-    margin: auto;
     padding: 20px;
 }
 
@@ -43,10 +49,19 @@
 }
 
 .questions-body {
+    min-height: 450px;
     position: relative;
     text-align: center;
     padding: 30px;
     background: papayawhip;
+}
+
+.question-body-over {
+    background: yellow;
+}
+
+.question-body-out {
+    background: turquoise;
 }
 
 /* Horizontal Line */
@@ -83,8 +98,18 @@
     border-bottom: 1px solid darkgray;
 }
 
+.question-item-dragging {
+    background: cyan;
+}
+
 .question-slider {
     position: absolute;
     top: 18px;
     left: 15px;
+}
+
+.table-footer {
+    margin-top: 15px;
+    position: absolute;
+    float: right;
 }

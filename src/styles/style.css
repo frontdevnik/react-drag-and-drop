@@ -15,6 +15,10 @@
     justify-content: center;
 }
 
+.table-wrapper-over {
+    background-color: ivory;
+}
+
 .table {
     padding: 20px;
 }

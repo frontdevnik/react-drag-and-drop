@@ -1,30 +1,28 @@
 import React from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { useSelector, useDispatch } from 'react-redux';
+import classnames from 'classnames';
 
 import TableWrapper from './table-wrapper';
 
 import {
-  setNewColumnsOrder,
+  switchColumnOrder,
   setNewQuestionsOrder,
-  setNewQuestions,
+  setNewAllQuestionsOrder,
 } from '../../redux/actions';
-import {
-  QUESTION_BLOCK_DROP_ZONE,
-  QUESTION_DROP_ZONE,
-  QUESTION_SECOND_DROP_ZONE,
-} from '../../constants';
+import { QUESTION_COLUMN_DROP_ZONE, QUESTION_COLUMN } from '../../constants';
 
 function Table() {
-  const columnsId = useSelector((store) => store.columnsId);
-  const questions = useSelector((store) => store.questions);
-  const secondQuestion = useSelector((store) => store.secondQuestion);
   const dispatch = useDispatch();
+  const { columns, allQuestions, selectedQuestions } = useSelector(
+    (store) => store
+  );
 
   const onDragEnd = (status) => {
     const { source, destination, type } = status;
     console.log(status);
 
+    // Проверка на перемещение ----------
     if (!destination) {
       return;
     }
@@ -36,51 +34,55 @@ function Table() {
     ) {
       return;
     }
+    // Проверка на перемещение ----------
 
-    if (source.droppableId === destination.droppableId) {
-      const movedQuestion = questions.splice([source.index], 1);
-      questions.splice(destination.index, 0, movedQuestion[0]);
-
-      dispatch(
-        type === QUESTION_BLOCK_DROP_ZONE
-          ? setNewColumnsOrder()
-          : setNewQuestionsOrder(questions)
-      );
+    // Перемещение колон
+    if (type === QUESTION_COLUMN) {
+      dispatch(switchColumnOrder(columns.reverse()));
       return;
     }
 
-    if (source.droppableId === QUESTION_DROP_ZONE) {
+    // Перемещение айтемов
+    if (source.droppableId === destination.droppableId) {
+      const questions =
+        source.droppableId === 'Questions' ? selectedQuestions : allQuestions;
+
       const movedQuestion = questions.splice([source.index], 1);
-      secondQuestion.splice(destination.index, 0, movedQuestion[0]);
-    } else if (source.droppableId === QUESTION_SECOND_DROP_ZONE) {
-      const movedQuestion = secondQuestion.splice([source.index], 1);
       questions.splice(destination.index, 0, movedQuestion[0]);
+      return;
     }
 
-    dispatch(
-      type === QUESTION_BLOCK_DROP_ZONE
-        ? setNewColumnsOrder()
-        : QUESTION_DROP_ZONE
-        ? setNewQuestions(questions)
-        : setNewQuestions(secondQuestion)
-    );
+    if (source.droppableId === 'Questions') {
+      const movedQuestion = selectedQuestions.splice([source.index], 1);
+
+      allQuestions.splice(destination.index, 0, movedQuestion[0]);
+      dispatch(setNewAllQuestionsOrder(allQuestions));
+    } else {
+      const movedQuestion = allQuestions.splice([source.index], 1);
+
+      selectedQuestions.splice(destination.index, 0, movedQuestion[0]);
+      dispatch(setNewQuestionsOrder(selectedQuestions));
+    }
   };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable
-        droppableId={QUESTION_BLOCK_DROP_ZONE}
-        type={QUESTION_BLOCK_DROP_ZONE}
+        droppableId={QUESTION_COLUMN_DROP_ZONE}
+        type={QUESTION_COLUMN}
         direction="horizontal"
       >
-        {(provided) => (
+        {(provided, snapshot) => (
           <section
-            className="table-wrapper CONTEXT"
+            className={classnames(
+              'table-wrapper CONTEXT',
+              snapshot.isDraggingOver && 'table-wrapper-over'
+            )}
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            {columnsId.map((id, i) => (
-              <TableWrapper key={id} id={id} index={i} />
+            {columns.map((title, i) => (
+              <TableWrapper key={i} title={title} index={i} />
             ))}
             {provided.placeholder}
           </section>

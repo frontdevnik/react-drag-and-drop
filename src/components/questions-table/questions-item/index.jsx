@@ -1,14 +1,18 @@
 import React from 'react';
+import classnames from 'classnames';
+import { useSelector } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 
-function questionItem({ question, number }) {
+function QuestionItem({ question, number }) {
   const { text, id } = question;
 
+  const isDraggable = useSelector(store => store.isDraggable);
+
   return (
-    <Draggable draggableId={id} index={number}>
-      {(provided) => (
+    <Draggable draggableId={id} index={number} isDragDisabled={!isDraggable} >
+      {(provided, snapshot) => (
         <div 
-          className="question-item DRAGGABLE"
+          className={classnames('question-item DRAGGABLE', snapshot.isDragging && 'question-item-dragging')}
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
@@ -21,4 +25,4 @@ function questionItem({ question, number }) {
   );
 }
 
-export default questionItem;
+export default QuestionItem;

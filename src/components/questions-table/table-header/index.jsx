@@ -1,8 +1,8 @@
 import React from 'react'
 
-function header() {
+function header(props) {
     return (
-        <div className="table-header">
+        <div className="table-header" {...props}>
             <h1>Questions</h1>
         </div>
     )
